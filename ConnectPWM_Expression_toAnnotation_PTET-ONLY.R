@@ -51,3 +51,6 @@ for(i in 1:nrow(intergenic_motif)){
   }
   cat("Writing to line: ", i, "\n", sep="")
 }
+
+output_file_name = gsub("_With-Annotation.csv", "_With-Expression.csv",input_file) #modify file name
+write.csv(pwm_table, file=output_file_name, row.names=FALSE)  
