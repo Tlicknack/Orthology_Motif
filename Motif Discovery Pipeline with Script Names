@@ -1,0 +1,61 @@
+Motif Discovery Pipeline:
+
+Modify FASTA/GFF files as needed	
+	1. Make Genic GFF
+		Bash script: Make_GFF_genic.bash
+			#This will convert all full GFFs to genic GFFs within Paramecium_GFF directory... will loop through directory
+		Bash script: Make_genic_GFF_proteinID.txt
+			#This will change all GeneIDs to ProteinIDs ... one at a time
+	2. Make Intergenic GFF
+		R script: Make_Intergenic_GFF_new.R
+			#This will use a genic GFF to create an intergenic GFF
+	3. Make Intergenic FASTA
+		R script: Make_intergenic_FASTA.R
+			#This will take both a FASTA file and intergenic GFF and output an intergenic FASTA
+			#Intergenic FASTA will only contain sequences between annotated genes
+				#Lengths range from 1 to a few thousand nts
+			#VERY SLOW... ONE AT A TIME
+
+Run MEME on Gene Families
+	1. Make FASTA files of gene families
+		R script: Get_Upstream_All_Aurelias.R
+			#This will take all FASTA and full GFFs for all 14 spp as well as a POFF table of para-orthologs
+			#It will go line by line in the table, extracting the upstream sequence for each gene and putting them into a single file
+				#16,587 lines in POFF table -> 16,587 FASTA files
+	2. Run MEME on gene families
+		Python script: meme_auto_query.py
+			#This will submit MEME jobs through a bash interface
+				#Python meme_auto_query.py
+			#MEME output files will go into a directory called 12nt_MEME_Results/
+
+Optional: Check E_Value Distribution
+	1. Plot E_value's from different MEME runs with different parameters
+		R script: Get_Evalues_from_MEME_XML.R
+			#This will go through each file in a directory of MEME outputs (in XML format), extract their E_Value, and save it to a vector
+			#The vector will then be visualized as a histogram with basic R graphing tools
+
+Make use of MEME Outputs
+	1. Parse MEME output files
+		R script: Parse_MEME_XML.R
+			#This file is kind of the master way to access the MEME results
+			#Two functions thus far:
+				#getPWM
+				#getConsensusSeq
+			#Will soon add new functions to:
+				#get regular expression to grep against genome
+				#to compare divergence around each motif.. left and right flank are saved
+				#get position to start codon... scanned sites summary $ scanned site
+			#Parsing_XML_CHeatSheet.R has list of what can be done with XML package
+	2. Scan PWM against genome
+		R script: getPWM_Scores_Paramecium.R
+			#This script requires another script given to me by Jeff
+			#C++ script: getPWM_Scores.cpp
+			#This will 
+
+Count Mismatches
+	1. Align upstream sequences 
+		Bash script: Muscle_Query
+			#This takes as an input every upstream sequence from the Paramecium_Upstream 
+		
+
+
