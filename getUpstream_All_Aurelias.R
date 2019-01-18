@@ -1,5 +1,4 @@
-#DONE
-#This program will get 200bp upstream of paraorthologous genes in all 14 paramecium spp
+#THis program will get 200bp upstream of paraorthologous genes in all 14 paramecium spp
 #INPUT:
   #fasta file for assemblies (all 14 spp)
   #modified gff that contains only genic regions
@@ -35,10 +34,8 @@ extractUpstream = function(sp, geneID, lgff, lfasta){            #Pass species n
 
 #MAIN                                                                                 #Run in home directory, output into scratch
 #prepare poff, fastas, gffs
-#poff table for this: includes pcaud and pmultimic. modified geneIDs from these files
 poff = read.table("/N/u/tlicknac/Carbonate/Paramecium_POFF/all_aurelias-cut-mod.poff", header=T)  #use poff table with modified pcaud and pmultimic names
 #poff = read.table("Paramecium_POFF/all_aurelias.flipped", header=T)
-poff = poff[which(poff$nbGenes > 5),]   #remove rows with fewer than 5 genes
 poff = poff[,-2]                     #remove number of genes
 
 vsp = colnames(poff)
@@ -68,7 +65,7 @@ for(spp in vsp){
   gff_read = read.table(gff_name, sep="\t")
   lgff[[spp]] = gff_read
 }
-lgff[["pcaud"]] = caud_gfff = read.table("/N/u/tlicknac/Carbonate/Paramecium_GFF/pcaud-oldgene.tab", sep="\t")  #different gff
+lgff[["pcaud"]] = caud_gfff = read.table("/N/u/tlicknac/Carbonate/Paramecium_GFF/pcaud-oldgene.tab", sep="\t")
 
 #loop through poff
 for(i in 1:nrow(poff)) {                                              
@@ -94,6 +91,12 @@ for(i in 1:nrow(poff)) {
     }
   }
   setwd("/N/dc2/scratch/tlicknac/Newest_All-Aurelias_Upstream")
-  write.fasta(as.list(vupstream), names(vupstream), file.out = fname)
-  cat("line", i, "done.\n-----------------------\n")                  #print that row i is complete 
+  
+  if(length(names(vupstream)) >4){
+    write.fasta(as.list(vupstream), names(vupstream), file.out = fname)
+    cat("line", i, "done.\n-----------------------\n")                  #print that row i is complete 
+  } else{
+    cat("The row has too few genes!\n---------------------\n")
+  }
+
 }
