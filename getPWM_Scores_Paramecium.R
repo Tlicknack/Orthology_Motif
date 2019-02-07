@@ -24,8 +24,7 @@ consensusFromPWM = function(pwm_tab){
 
 #MAIN
 fasta_directory = "/N/u/tlicknac/Carbonate/Paramecium_FASTA/"                                                         #location of FASTAs                                                                             #Rm all files that arent fasta files *this will capture .fasta and .fa
-FASTAs = c("ptetraurelia_mac_51.fa")
-#, "biaurelia_V1-4_assembly_v1.fa", "sexaurelia_AZ8-4_assembly_v1.fasta")
+FASTAs = c("ptetraurelia_mac_51.fa", "biaurelia_V1-4_assembly_v1.fa", "sexaurelia_AZ8-4_assembly_v1.fasta")
 
 pwm_directory = "/N/dc2/scratch/tlicknac/Newest_All-Aurelias_PWM/"
 
@@ -48,10 +47,10 @@ for(assembly in FASTAs){                                                        
       pwm_tab = as.matrix(read.table(pwm_file_path, header=T, as.is=T, sep="\t"))
       
       motif_length = nchar(as.character(consensusFromPWM(pwm_tab)))
-      vscores = getScores(pwm_tab, scaf_seq) #C++ code
-      vscores = head(vscores, -(motif_length))  #remove the last few scores on the scaffold, as they will be abornally high due to algorithm
+      vscores = getScores(pwm_tab, scaf_seq)                                          #C++ code
+      vscores = head(vscores, -(motif_length))                                        #remove the last few scores on the scaffold, as they will be abornally high due to algorithm
       vscores_rev = getScores(pwm_tab, reverse_seq)
-      vscores_rev = head(vscores_rev, -(motif_length))
+      vscores_rev = head(vscores_rev, -(motif_length))  #??will this throw off my reverse positions by motif_length??
       
       vgood = which(vscores>0)                      
       vgood_rev = which(vscores_rev>0)                                
@@ -79,7 +78,7 @@ for(assembly in FASTAs){                                                        
         for(rposition in vgood_rev){
           
           if(firstloop == T){
-            real_pos = (nchar(reverse_seq) - rposition) + 1 #this is required to return the actual coordinates for hits on the + strand... rposition is with respect to - strand
+            real_pos = (nchar(reverse_seq) - rposition) + 1             #this is required to return the actual coordinates for hits on the + strand... rposition is with respect to - strand
             finaldf = data.frame( t(matrix( c( substr(reverse_seq, rposition, rposition+12), pwm, assembly, getName(scaf), real_pos, vscores_rev[rposition], "-" ), byrow=T )) )
             colnames(finaldf) = c("Motif", "WGD", "Species", "Scaffold", "Position", "PWM_Score", "Strand")
             firstloop=FALSE
