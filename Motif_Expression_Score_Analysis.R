@@ -39,3 +39,28 @@ df_score_dist = rbind(df_score_dist_plus, df_score_dist_minus)
 cor.test(x=df_score_dist$X1, y=df_score_dist$X2)
 
 #Correlation between distance and expression
+
+
+
+
+#change this when have time...  
+pwm_tab_RNAseq = read.csv("/home/tlicknac/Desktop/Paramecium_Genome_Data/Data/pwm-distribution-duplicate_15708-1_With-CellCycleSignificance.csv", header=T, as.is=T)
+five_plus = pwm_tab_RNAseq[which(is.na(pwm_tab_RNAseq$CellCycle_Significance_FivePrimePlus) == F),]
+five_minus = pwm_tab_RNAseq[which(is.na(pwm_tab_RNAseq$CellCycle_Significance_FivePrimeMinus) == F),]
+
+yes_plus = five_plus[which(five_plus$CellCycle_Significance_FivePrimePlus == "YES"),]        #get rows where the plus-strand gene is DE
+yes_minus = five_minus[which(five_minus$CellCycle_Significance_FivePrimeMinus == "YES"),]    #same for minus-strand gene
+no_plus = five_plus[which(five_plus$CellCycle_Significance_FivePrimePlus == "NO"),]
+no_minus = five_minus[which(five_minus$CellCycle_Significance_FivePrimeMinus == "NO"),]
+
+yes_combined = rbind(yes_plus, yes_minus)  #combine for purposes of counting
+no_combined = rbind(no_plus, no_minus)
+
+nrow(yes_combined)        #significantly expressed during cell cycle
+nrow(no_combined)         #significantly expressed during cell cycle
+
+pwm_scores_yes = c(yes_plus$PWM_Score[which(yes_plus$Strand == "+")], yes_minus$PWM_Score[which(yes_minus$Strand == "-")])  #vector of pwm scores for all with PWM on correct strand
+pwm_scores_no = c(no_plus$PWM_Score[which(no_plus$Strand == "+")], no_minus$PWM_Score[which(no_minus$Strand == "-")])
+
+summary(pwm_scores_yes)
+summary(pwm_scores_no)
